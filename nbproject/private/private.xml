@@ -3,10 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/MI_CARPETA_PERSONAL/UNSA/CUARTO%20AÑO%202015/Bases%20de%20Datos%20I%20%5BCESAR%20baluarte%5D/LABoratorio/DESKTOP_COTIZACION_y_PRESUPUESTO/src/CONSULTAS/CONSULTA_COMPANIA.java</file>
-            <file>file:/D:/MI_CARPETA_PERSONAL/UNSA/CUARTO%20AÑO%202015/Bases%20de%20Datos%20I%20%5BCESAR%20baluarte%5D/LABoratorio/DESKTOP_COTIZACION_y_PRESUPUESTO/src/Programa/PG_L13002_Mantenim_de_Cia.java</file>
-            <file>file:/D:/MI_CARPETA_PERSONAL/UNSA/CUARTO%20AÑO%202015/Bases%20de%20Datos%20I%20%5BCESAR%20baluarte%5D/LABoratorio/DESKTOP_COTIZACION_y_PRESUPUESTO/src/MENU_SISTEMA.java</file>
-            <file>file:/D:/MI_CARPETA_PERSONAL/UNSA/CUARTO%20AÑO%202015/Bases%20de%20Datos%20I%20%5BCESAR%20baluarte%5D/LABoratorio/DESKTOP_COTIZACION_y_PRESUPUESTO/src/TABLA_ARTICULOS.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/DB/Generator/CustomDefaultTableModel.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/DB/Conector.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Datos/PG_L13001_Mantenim_de_Art.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Vistas/Reportes/ARTICULOS.jrxml</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Vistas/MENU_SISTEMA.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/DB/Generator/FileGeneradorCodigos.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Vistas/Consultas/CONSULTA_COTIZACION.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Vistas/TABLA_CIAS.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Vistas/PRINCIPAL.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Datos/PG_L13002_Mantenim_de_Cia.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/DB/Generator/GeneradorCodigos.java</file>
+            <file>file:/C:/Users/Lab02-05/Documents/mariohc/DESKTOP_COTIZACION_Y_PRESUPUESTO/src/Vistas/INGRESAR_LOGIN.java</file>
         </group>
     </open-files>
 </project-private>
