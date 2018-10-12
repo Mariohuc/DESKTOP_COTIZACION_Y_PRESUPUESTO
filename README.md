@@ -7,5 +7,6 @@ TOOLS
 - POSTGRESQL 9.5
 - JDK 8
 - LAST CONECTOR JDBC-POSTGRESQL
+- RECOMMEND USE NETBEANS 8 AS IDE
 
-About database user is postgres by default and the pass admin. Don't forgot create tables throught the script SQL in the repository... 
+First, create the database called "quote" and about database owner is postgres by default and the pass admin. Don't forget create tables throught the script SQL in the repository... 
