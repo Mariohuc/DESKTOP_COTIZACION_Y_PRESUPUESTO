@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d42ccc07-ec74-4862-b11a-c75e3f97c3ce">
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     articulos.`ArtNum` AS articulos_ArtNum,
+     articulos.`ArtDes` AS articulos_ArtDes,
+     articulos.`ArtPrecUnit` AS articulos_ArtPrecUnit,
+     articulos.`ArtEstReg` AS articulos_ArtEstReg,
+     articulos.`SucCod` AS articulos_SucCod,
+     articulos.`CiaCod` AS articulos_CiaCod,
+     cias.`CiaCod` AS cias_CiaCod,
+     cias.`CiaNom` AS cias_CiaNom,
+     cias.`CiaRUC` AS cias_CiaRUC,
+     cias.`CiaEstReg` AS cias_CiaEstReg,
+     sucursales.`SucCod` AS sucursales_SucCod,
+     sucursales.`SucDes` AS sucursales_SucDes,
+     sucursales.`SucEstReg` AS sucursales_SucEstReg,
+     sucursales.`CiaCod` AS sucursales_CiaCod
+FROM
+     `cias` cias INNER JOIN `sucursales` sucursales ON cias.`CiaCod` = sucursales.`CiaCod`
+     INNER JOIN `articulos` articulos ON sucursales.`SucCod` = articulos.`SucCod`
+     AND sucursales.`CiaCod` = articulos.`CiaCod`]]>
+	</queryString>
+	<field name="cias_CiaNom" class="java.lang.String"/>
+	<field name="sucursales_SucDes" class="java.lang.String"/>
+	<field name="articulos_ArtNum" class="java.lang.Integer"/>
+	<field name="articulos_ArtDes" class="java.lang.String"/>
+	<field name="articulos_ArtPrecUnit" class="java.math.BigDecimal"/>
+	<field name="articulos_ArtEstReg" class="java.lang.String"/>
+	<group name="cias_CiaNom">
+		<groupExpression><![CDATA[$F{cias_CiaNom}]]></groupExpression>
+		<groupHeader>
+			<band height="37">
+				<frame>
+					<reportElement mode="Opaque" x="0" y="7" width="555" height="24" forecolor="#B89F7D" backcolor="#000000" uuid="4364e1ef-8db5-4e62-a943-815613edc46e"/>
+					<textField isStretchWithOverflow="true">
+						<reportElement style="SubTitle" isPrintRepeatedValues="false" x="2" y="0" width="479" height="24" forecolor="#FFFFFF" uuid="a2a1a7fe-87b6-4cfb-839b-6e7d5e5934c4"/>
+						<textElement>
+							<font isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{cias_CiaNom}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="6"/>
+		</groupFooter>
+	</group>
+	<group name="sucursales_SucDes">
+		<groupExpression><![CDATA[$F{sucursales_SucDes}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement positionType="Float" x="0" y="4" width="555" height="26" forecolor="#000000" uuid="831dea86-e3d7-4cfa-bd8a-c4c3578e5e50"/>
+					<textElement>
+						<font fontName="Times New Roman" size="16" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{sucursales_SucDes}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="articulos_ArtNum">
+		<groupExpression><![CDATA[$F{articulos_ArtNum}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="132" splitType="Stretch">
+			<image>
+				<reportElement x="456" y="0" width="99" height="132" uuid="71d8576a-dfc4-4b5b-af6c-45eef68af88a"/>
+				<imageExpression><![CDATA["cherry.jpg"]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="451" height="95" backcolor="#000000" uuid="d5482d15-9ff4-4947-9afe-9052b5de3d91"/>
+				<staticText>
+					<reportElement style="Title" x="0" y="0" width="370" height="66" uuid="759b852c-9bbf-4563-9afc-c6c365275b36"/>
+					<textElement>
+						<font isBold="false"/>
+					</textElement>
+					<text><![CDATA[Cherry Title]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="SubTitle" x="157" y="66" width="249" height="29" uuid="7367f5b9-b53d-42e4-930d-80a6a4616459"/>
+					<textElement>
+						<font size="22" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Cherry SubTitle]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement mode="Opaque" x="0" y="100" width="451" height="32" forecolor="#000000" backcolor="#CC0000" uuid="63399aa3-e0e4-47be-b418-38d89989c0bd"/>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement x="307" y="12" width="144" height="20" forecolor="#FFFFFF" uuid="a9b00276-b72e-49f4-aaa2-977b3fc047d0"/>
+					<textElement textAlignment="Right">
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement style="Column header" x="0" y="7" width="185" height="18" forecolor="#000000" uuid="25c8763c-1305-428e-b7ec-5df8b7a1ebac"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[articulos_ArtDes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="185" y="7" width="185" height="18" forecolor="#000000" uuid="965811cf-a2b2-4132-a849-7806f4988ebb"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[articulos_ArtPrecUnit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="370" y="7" width="185" height="18" forecolor="#000000" uuid="d2bedcb8-7a59-43f8-be86-2730aaa56e35"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[articulos_ArtEstReg]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="18" uuid="d8072c61-24a3-4ad4-986c-c288ffef0ad3"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="0" y="0" width="185" height="18" uuid="9bfcf45f-438c-4c96-95ad-3cb67348c330"/>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{articulos_ArtDes}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="185" y="0" width="185" height="18" uuid="81cb605a-cf2b-4c08-bcaa-e5c4109afe91"/>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{articulos_ArtPrecUnit}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="370" y="0" width="185" height="18" uuid="eea05313-a686-4615-a5d8-f9952355979f"/>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{articulos_ArtEstReg}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="f11af9db-3da4-48ea-a408-77f0d3545fc4"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#000000" uuid="10966982-88bb-4024-80ac-ffab035237a4"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="513" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="23a061f0-e146-4cd2-85db-e067323f85d3"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="433" y="0" width="80" height="20" forecolor="#FFFFFF" uuid="e8a32515-d52b-4282-953b-d742373366d9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="1" width="197" height="20" forecolor="#FFFFFF" uuid="df064a3d-f92d-48c0-b324-8ef5936c04a4"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

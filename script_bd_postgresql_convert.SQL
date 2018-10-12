@@ -1,0 +1,152 @@
+/*
+Created: 23/06/2015
+Modified: 29/06/2015
+Model: MySQL 5.5
+Database: MySQL 5.5
+*/
+
+
+-- Create tables section -------------------------------------------------
+
+-- Table CIAS
+
+CREATE TABLE CIAS
+(
+  CiaCod Int NOT NULL,
+  CiaNom Char(60),
+  CiaRUC Char(11),
+  CiaEstReg Char(1)
+)
+;
+
+ALTER TABLE CIAS ADD  PRIMARY KEY (CiaCod)
+;
+
+-- Table CLIENTES
+
+CREATE TABLE CLIENTES
+(
+  CliCod Int NOT NULL,
+  CliNom Char(60),
+  CliDir Char(60),
+  CliEstReg Char(1)
+)
+;
+
+ALTER TABLE CLIENTES ADD  PRIMARY KEY (CliCod)
+;
+
+-- Table ARTICULOS
+
+CREATE TABLE ARTICULOS
+(
+  ArtNum Int NOT NULL,
+  ArtDes Char(50),
+  ArtPrecUnit Decimal(11,3),
+  ArtEstReg Char(1),
+  SucCod Int,
+  CiaCod Int
+)
+;
+
+CREATE INDEX IX_Relationship2 ON ARTICULOS (SucCod,CiaCod)
+;
+
+ALTER TABLE ARTICULOS ADD  PRIMARY KEY (ArtNum)
+;
+
+-- Table VENDEDORES
+
+CREATE TABLE VENDEDORES
+(
+  VenCod Int NOT NULL,
+  VenNom Char(60),
+  VenTel Int,
+  VenEmail Char(40),
+  VenEstReg Char(1)
+)
+;
+
+ALTER TABLE VENDEDORES ADD  PRIMARY KEY (VenCod)
+;
+
+-- Table SUCURSALES
+
+CREATE TABLE SUCURSALES
+(
+  SucCod Int NOT NULL,
+  SucDes Char(50),
+  SucEstReg Char(1),
+  CiaCod Int NOT NULL
+)
+;
+
+ALTER TABLE SUCURSALES ADD  PRIMARY KEY (SucCod,CiaCod)
+;
+
+-- Table COTIZACION_CAB
+
+CREATE TABLE COTIZACION_CAB
+(
+  CotCabNum Int NOT NULL,
+  CotCabFecEmi Date,
+  CotCabGar Char(60),
+  CotCabPlazEnt Char(60),
+  CotCabForPag Char(20),
+  CotCabEstReg Char(1),
+  CliCod Int,
+  VenCod Int,
+  SucCod Int,
+  CiaCod Int
+)
+;
+
+CREATE INDEX IX_Relationship3 ON COTIZACION_CAB (CliCod)
+;
+
+CREATE INDEX IX_Relationship4 ON COTIZACION_CAB (VenCod)
+;
+
+CREATE INDEX IX_Relationship7 ON COTIZACION_CAB (SucCod,CiaCod)
+;
+
+ALTER TABLE COTIZACION_CAB ADD  PRIMARY KEY (CotCabNum)
+;
+
+-- Table COTIZACION_DET
+
+CREATE TABLE COTIZACION_DET
+(
+  CotDetCant Int,
+  CotDetEstReg Char(1),
+  ArtNum Int NOT NULL,
+  CotCabNum Int NOT NULL
+)
+;
+
+ALTER TABLE COTIZACION_DET ADD  PRIMARY KEY (ArtNum,CotCabNum)
+;
+
+-- Create relationships section ------------------------------------------------- 
+
+ALTER TABLE SUCURSALES ADD CONSTRAINT Relationship1 FOREIGN KEY (CiaCod) REFERENCES CIAS (CiaCod) ON DELETE NO ACTION ON UPDATE NO ACTION
+;
+
+ALTER TABLE ARTICULOS ADD CONSTRAINT Relationship2 FOREIGN KEY (SucCod, CiaCod) REFERENCES SUCURSALES (SucCod, CiaCod) ON DELETE NO ACTION ON UPDATE NO ACTION
+;
+
+ALTER TABLE COTIZACION_CAB ADD CONSTRAINT Relationship3 FOREIGN KEY (CliCod) REFERENCES CLIENTES (CliCod) ON DELETE NO ACTION ON UPDATE NO ACTION
+;
+
+ALTER TABLE COTIZACION_CAB ADD CONSTRAINT Relationship4 FOREIGN KEY (VenCod) REFERENCES VENDEDORES (VenCod) ON DELETE NO ACTION ON UPDATE NO ACTION
+;
+
+ALTER TABLE COTIZACION_DET ADD CONSTRAINT Relationship5 FOREIGN KEY (ArtNum) REFERENCES ARTICULOS (ArtNum) ON DELETE NO ACTION ON UPDATE NO ACTION
+;
+
+ALTER TABLE COTIZACION_DET ADD CONSTRAINT Relationship6 FOREIGN KEY (CotCabNum) REFERENCES COTIZACION_CAB (CotCabNum) ON DELETE NO ACTION ON UPDATE NO ACTION
+;
+
+ALTER TABLE COTIZACION_CAB ADD CONSTRAINT Relationship7 FOREIGN KEY (SucCod, CiaCod) REFERENCES SUCURSALES (SucCod, CiaCod) ON DELETE NO ACTION ON UPDATE NO ACTION
+;
+
