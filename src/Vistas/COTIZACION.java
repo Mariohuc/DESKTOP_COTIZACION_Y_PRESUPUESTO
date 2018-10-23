@@ -1,5 +1,6 @@
 package Vistas;
 
+import DB.Generator.CodeGenerate;
 import Datos.PG_L13002_Mantenim_de_Cia;
 import Datos.PG_L13003_Mantenim_de_Ven;
 import Datos.PG_L13004_Mantenim_de_Suc;
@@ -7,6 +8,7 @@ import Datos.PG_L13005_Mantenim_de_Cli;
 import Datos.PG_L16001_Cotizacion_Cab;
 import Datos.PG_L16002_Cotizacion_Det;
 import DB.Generator.CustomDefaultTableModel;
+import DB.Generator.Entities;
 import DB.Generator.FileGeneradorCodigos;
 import DB.Generator.GeneradorCodigos;
 import java.awt.Color;
@@ -714,10 +716,8 @@ public class COTIZACION extends javax.swing.JInternalFrame {
     private void CajaCodigoCiaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CajaCodigoCiaMouseClicked
         // TODO add your handling code here:
         CajaCodigoCia.setBorder(BorderCajaNoEditable);
-        FileGeneradorCodigos file = new FileGeneradorCodigos();
-        file.leer();
-        nuevo = file.getGenerador();
-        CajaCodigoCia.setText( String.valueOf( nuevo.generarCodCliente() )  );
+
+        CajaCodigoCia.setText( String.valueOf( CodeGenerate.getCode(Entities.COTIZACION_CAB) )  );
     }//GEN-LAST:event_CajaCodigoCiaMouseClicked
 
     private void CajaCodigoCiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CajaCodigoCiaActionPerformed

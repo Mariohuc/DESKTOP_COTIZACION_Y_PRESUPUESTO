@@ -1,8 +1,10 @@
 package Vistas;
 
+import DB.Generator.CodeGenerate;
 import Datos.PG_L13002_Mantenim_de_Cia;
 import Datos.PG_L13004_Mantenim_de_Suc;
 import DB.Generator.CustomDefaultTableModel;
+import DB.Generator.Entities;
 import DB.Generator.FileGeneradorCodigos;
 import DB.Generator.GeneradorCodigos;
 import java.awt.Color;
@@ -326,10 +328,8 @@ public class TABLA_SUCURSAL extends javax.swing.JInternalFrame {
     private void CajaCodigoSucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CajaCodigoSucMouseClicked
         // TODO add your handling code here:
         CajaCodigoSuc.setBorder(BorderCajaNoEditable );
-        FileGeneradorCodigos file = new FileGeneradorCodigos();
-        file.leer();
-        nuevo = file.getGenerador();
-        CajaCodigoSuc.setText( String.valueOf( nuevo.generarCodSucursales())  );
+        
+        CajaCodigoSuc.setText( String.valueOf( CodeGenerate.getCode(Entities.SUCURSALES) )  );
     }//GEN-LAST:event_CajaCodigoSucMouseClicked
 
     private void CajaCodigoSucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CajaCodigoSucActionPerformed

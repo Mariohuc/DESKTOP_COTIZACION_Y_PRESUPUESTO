@@ -1,7 +1,9 @@
 package Vistas;
 
+import DB.Generator.CodeGenerate;
 import Datos.PG_L13005_Mantenim_de_Cli;
 import DB.Generator.CustomDefaultTableModel;
+import DB.Generator.Entities;
 import DB.Generator.FileGeneradorCodigos;
 import DB.Generator.GeneradorCodigos;
 import java.awt.Color;
@@ -238,10 +240,8 @@ public class TABLA_CLIENTES extends javax.swing.JInternalFrame {
     private void CajaCodigoCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CajaCodigoCliMouseClicked
         // TODO add your handling code here:
         CajaCodigoCli.setBorder(BorderCajaNoEditable);
-        FileGeneradorCodigos file = new FileGeneradorCodigos();
-        file.leer();
-        nuevo = file.getGenerador();
-        CajaCodigoCli.setText( String.valueOf( nuevo.generarCodCliente() )  );
+
+        CajaCodigoCli.setText( String.valueOf( CodeGenerate.getCode(Entities.CLIENTES) )  );
     }//GEN-LAST:event_CajaCodigoCliMouseClicked
 
     private void CajaCodigoCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CajaCodigoCliActionPerformed

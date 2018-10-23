@@ -1,7 +1,9 @@
 package Vistas;
 
+import DB.Generator.CodeGenerate;
 import Datos.PG_L13003_Mantenim_de_Ven;
 import DB.Generator.CustomDefaultTableModel;
+import DB.Generator.Entities;
 import DB.Generator.FileGeneradorCodigos;
 import DB.Generator.GeneradorCodigos;
 import java.awt.Color;
@@ -356,10 +358,8 @@ public class TABLA_VENDEDORES extends javax.swing.JInternalFrame {
     private void CajaCodigoVenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CajaCodigoVenMouseClicked
         // TODO add your handling code here:
         CajaCodigoVen.setBorder(BorderCajaNoEditable);
-        FileGeneradorCodigos file = new FileGeneradorCodigos();
-        file.leer();
-        nuevo = file.getGenerador();
-        CajaCodigoVen.setText( String.valueOf( nuevo.generarCodVendedores() )  );
+
+        CajaCodigoVen.setText( String.valueOf( CodeGenerate.getCode(Entities.VENDEDORES) )  );
     }//GEN-LAST:event_CajaCodigoVenMouseClicked
 
     private void CajaCodigoVenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CajaCodigoVenActionPerformed
