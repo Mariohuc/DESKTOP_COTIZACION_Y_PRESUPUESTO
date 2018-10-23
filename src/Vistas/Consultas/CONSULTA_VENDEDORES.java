@@ -36,7 +36,7 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class CONSULTA_VENDEDORES extends javax.swing.JInternalFrame {
  
-    private Connection cn = Conector.conexion();
+    private Connection cn = null;
     private String ConsultaSQL;
     
     public CONSULTA_VENDEDORES() {
@@ -45,6 +45,7 @@ public class CONSULTA_VENDEDORES extends javax.swing.JInternalFrame {
         ResultSet resultado;
         
         try{
+            cn = Conector.conexion();
             Statement st = cn.createStatement();
             resultado = st.executeQuery("SHOW TABLES LIKE 'VISTA_VENDEDORES'");
             int rs;

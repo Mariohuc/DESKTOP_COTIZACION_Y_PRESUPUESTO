@@ -73,6 +73,7 @@ public class PG_L13002_Mantenim_de_Cia {
             insertarNuevaCia.setString( 4, estReg );
             
             resultado = insertarNuevaCia.executeUpdate();
+         
         } // fin de try // fin de try // fin de try // fin de try
             catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
