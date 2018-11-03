@@ -32,7 +32,6 @@ public class COTIZACION extends javax.swing.JInternalFrame {
     //Object [][] dbCotizacionDet;
     CustomDefaultTableModel modelo;
     private int filaSeleccionada;
-    private GeneradorCodigos nuevo;
     Border BorderCajaNoEditable;
     Border BorderCajaEditable;
     String [] articuloParaCotizar;
@@ -734,7 +733,6 @@ public class COTIZACION extends javax.swing.JInternalFrame {
 
     private void BotonGuardarCotizacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGuardarCotizacionActionPerformed
         FileGeneradorCodigos file = new FileGeneradorCodigos();
-        file.escribir(nuevo);
 
         DECLARACION_CABECERA.agregarCotizacionCab( Integer.parseInt(CajaCotCabNum.getText()),
                 CajaFecha.getText(), CajaGarantia.getText(), CajaPlazoEntreg.getText(),
@@ -801,10 +799,8 @@ public class COTIZACION extends javax.swing.JInternalFrame {
     private void CajaCotCabNumMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CajaCotCabNumMouseClicked
         // TODO add your handling code here:
         CajaCotCabNum.setBorder(BorderCajaNoEditable);
-        FileGeneradorCodigos file = new FileGeneradorCodigos();
-        file.leer();
-        nuevo = file.getGenerador();
-        CajaCotCabNum.setText( String.valueOf( nuevo.generarCodCotCab())  );
+
+        CajaCotCabNum.setText( String.valueOf( CodeGenerate.getCode(Entities.COTIZACION_CAB) )  );
     }//GEN-LAST:event_CajaCotCabNumMouseClicked
 
     private void CajaCodigoCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CajaCodigoCliMouseClicked
