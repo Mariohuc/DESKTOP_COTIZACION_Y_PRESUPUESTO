@@ -1,6 +1,6 @@
 package Vistas;
 
-import Datos.PG_L13005_Mantenim_de_Cli;
+import OAD.PG_L13005_Mantenim_de_Cli;
 import DB.Generator.CustomDefaultTableModel;
 import DB.Generator.FileGeneradorCodigos;
 import DB.Generator.GeneradorCodigos;

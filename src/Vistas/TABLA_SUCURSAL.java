@@ -1,8 +1,8 @@
 package Vistas;
 
 import DB.Generator.CodeGenerate;
-import Datos.PG_L13002_Mantenim_de_Cia;
-import Datos.PG_L13004_Mantenim_de_Suc;
+import OAD.PG_L13002_Mantenim_de_Cia;
+import OAD.PG_L13004_Mantenim_de_Suc;
 import DB.Generator.CustomDefaultTableModel;
 import DB.Generator.Entities;
 import DB.Generator.FileGeneradorCodigos;

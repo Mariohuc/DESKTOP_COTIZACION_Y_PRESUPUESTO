@@ -1,7 +1,7 @@
 package Vistas;
 
 import DB.Generator.CodeGenerate;
-import Datos.PG_L13003_Mantenim_de_Ven;
+import OAD.PG_L13003_Mantenim_de_Ven;
 import DB.Generator.CustomDefaultTableModel;
 import DB.Generator.Entities;
 import DB.Generator.FileGeneradorCodigos;

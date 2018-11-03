@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Datos;
+package OAD;
 
 import DB.Conector;
 import java.sql.Connection;
@@ -29,6 +29,15 @@ public class PG_L13002_Mantenim_de_Cia {
     private PreparedStatement modificarCia = null;
     private PreparedStatement eliminarCia = null;
     
+		/*
+			Data Manipulation Language (DML) as INSERT, UPDATE, DELETE, ...
+			Data Definition Language (DDL) as CREATE TABLE, DROP etc.
+		
+			ExecuteUpdate()
+			Return:	Ya sea (1) el recuento de filas para las declaraciones del lenguaje de manipulación de datos SQL (DML) 
+			o (2) 0 para las declaraciones de SQL que no devuelven nada.
+		*/
+		
     // constructor
     public PG_L13002_Mantenim_de_Cia(){
         try{

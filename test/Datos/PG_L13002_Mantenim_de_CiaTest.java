@@ -5,6 +5,7 @@
  */
 package Datos;
 
+import OAD.PG_L13002_Mantenim_de_Cia;
 import DB.Conector;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,13 +44,14 @@ public class PG_L13002_Mantenim_de_CiaTest {
     /**
      * Test of agregarCia method, of class PG_L13002_Mantenim_de_Cia.
      */
+		
     @Test
     public void testAgregarCia() {
         System.out.println("agregarCia");
         int ciaCod = 0;
-        String ciaNom = "";
-        String Ruc = "";
-        String estReg = "";
+        String ciaNom = "ARC S.A.C";
+        String Ruc = "12354325671";
+        String estReg = "A";
         PG_L13002_Mantenim_de_Cia instance = new PG_L13002_Mantenim_de_Cia();
         int expResult = 0;
         int result = instance.agregarCia(ciaCod, ciaNom, Ruc, estReg);
@@ -57,25 +59,26 @@ public class PG_L13002_Mantenim_de_CiaTest {
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
-
+		
     /**
      * Test of ActualizarCia method, of class PG_L13002_Mantenim_de_Cia.
      */
+		
     @Test
     public void testActualizarCia() {
         System.out.println("ActualizarCia");
         int ciaCod = 0;
         String ciaNom = "";
-        String Ruc = "";
-        String estReg = "";
+        String Ruc = "84344343555";
+        String estReg = "A";
         PG_L13002_Mantenim_de_Cia instance = new PG_L13002_Mantenim_de_Cia();
-        int expResult = 0;
+        int expResult = 1;
         int result = instance.ActualizarCia(ciaCod, ciaNom, Ruc, estReg);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
-
+		
     /**
      * Test of EliminarCia method, of class PG_L13002_Mantenim_de_Cia.
      */
@@ -84,7 +87,7 @@ public class PG_L13002_Mantenim_de_CiaTest {
         System.out.println("EliminarCia");
         int ciaCod = 0;
         PG_L13002_Mantenim_de_Cia instance = new PG_L13002_Mantenim_de_Cia();
-        int expResult = 0;
+        int expResult = 1;
         int result = instance.EliminarCia(ciaCod);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.

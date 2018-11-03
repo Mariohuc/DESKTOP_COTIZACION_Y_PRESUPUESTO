@@ -1,12 +1,12 @@
 package Vistas;
 
 import DB.Generator.CodeGenerate;
-import Datos.PG_L13002_Mantenim_de_Cia;
-import Datos.PG_L13003_Mantenim_de_Ven;
-import Datos.PG_L13004_Mantenim_de_Suc;
-import Datos.PG_L13005_Mantenim_de_Cli;
-import Datos.PG_L16001_Cotizacion_Cab;
-import Datos.PG_L16002_Cotizacion_Det;
+import OAD.PG_L13002_Mantenim_de_Cia;
+import OAD.PG_L13003_Mantenim_de_Ven;
+import OAD.PG_L13004_Mantenim_de_Suc;
+import OAD.PG_L13005_Mantenim_de_Cli;
+import OAD.PG_L16001_Cotizacion_Cab;
+import OAD.PG_L16002_Cotizacion_Det;
 import DB.Generator.CustomDefaultTableModel;
 import DB.Generator.Entities;
 import DB.Generator.FileGeneradorCodigos;
