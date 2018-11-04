@@ -36,15 +36,16 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class CONSULTA_CLIENTES extends javax.swing.JInternalFrame {
     
-    private Connection cn = Conector.conexion();
     private String ConsultaSQL;
  
     public CONSULTA_CLIENTES() throws SQLException {
         initComponents();
         txtdni.setEnabled(false);
-        ResultSet resultado;
-        
+        ResultSet resultado = null;
+        /*
+        Connection cn = null;
         try{
+            cn = Conector.conexion();
             Statement st = cn.createStatement();
             resultado = st.executeQuery(" SHOW TABLES LIKE 'VISTA_CLIENTES'");
             int rs;
@@ -58,6 +59,7 @@ public class CONSULTA_CLIENTES extends javax.swing.JInternalFrame {
             excepcionSql.printStackTrace();
             close();
         } // fin de catch
+        */
           
     }
     void Cargarlistaclientes()          
@@ -66,7 +68,8 @@ public class CONSULTA_CLIENTES extends javax.swing.JInternalFrame {
         CustomDefaultTableModel modelo= new CustomDefaultTableModel();
         String []Titulos = {"CODIGO","NOMBRES","DIRECCION"};
         modelo.setColumnIdentifiers(Titulos);
-         this.tbclientes.setModel(modelo);
+        this.tbclientes.setModel(modelo);
+        /*
         try {
            
         
@@ -87,7 +90,7 @@ public class CONSULTA_CLIENTES extends javax.swing.JInternalFrame {
         } catch (SQLException ex) {
             Logger.getLogger(CONSULTA_CLIENTES.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        */
     
     }
 
@@ -333,14 +336,6 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     
 }//GEN-LAST:event_jButton2ActionPerformed
 
-    public void close(){
-        try{
-            cn.close();
-        } // fin de try
-        catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-        } // fin de catch
-    } // fin del método close
 
     private void txtdniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtdniActionPerformed
         // TODO add your handling code here:

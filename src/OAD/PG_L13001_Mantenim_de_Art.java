@@ -22,53 +22,26 @@ import java.util.logging.Logger;
  */
 public class PG_L13001_Mantenim_de_Art {
     
-    private Connection conexion = null; // maneja la conexión
-    private PreparedStatement seleccionarTodosLosArticulosQueEsten = null;
-    private PreparedStatement seleccionarArticulosPorCodigo = null;
-    private PreparedStatement insertarNuevoArticulo = null;
-    private PreparedStatement modificarArticulo = null;
-    private PreparedStatement eliminarArticulo = null;
     
-    // constructor
-    public PG_L13001_Mantenim_de_Art(){
-        try{
-           
-            conexion = Conector.conexion();
-            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
-            seleccionarTodosLosArticulosQueEsten =
-            conexion.prepareStatement( "SELECT * FROM ARTICULOS WHERE ArtEstReg = ?"  );
-           
-            // crea una consulta que selecciona las entradas con un apellido específico
-            seleccionarArticulosPorCodigo = conexion.prepareStatement(
-            "SELECT * FROM ARTICULOS WHERE ArtNum = ?" );
-
-            // crea instrucción insert para agregar una nueva entrada en la base de datos
-            insertarNuevoArticulo = conexion.prepareStatement("INSERT INTO ARTICULOS " +
-            "( ArtNum, ArtDes, ArtPrecUnit, ArtEstReg, SucCod, CiaCod ) " +
-            "VALUES ( ?, ?, ?, ?, ?, ? )" );
-            
-            modificarArticulo = conexion.prepareStatement("UPDATE ARTICULOS " +
-                "SET ArtDes = ? ," +
-                "ArtPrecUnit = ? ," +                    
-                "ArtEstReg = ? ," +
-                "SucCod = ? ,"+
-                "CiaCod = ? "+
-                "WHERE ArtNum = ? ");
-            
-            eliminarArticulo = conexion.prepareStatement("UPDATE ARTICULOS " +
-                "SET ArtEstReg = ? "+
-                "WHERE ArtNum = ? ");
-         
-        } catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-            System.exit( 1 );
-        } 
-		} // fin del constructor de PG_L13001_Mantenim_de_Art
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (java.lang.ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     
     public int agregarArticulo( int artNum, String artDesc, double precUnit, String estReg ,int sucCod, int ciaCod ){
         int resultado = 0;
         // establece los parámetros, después ejecuta insertarNuevoArticulo
+        Connection conexion = null;
         try{
+            conexion = Conector.conexion();
+            // crea instrucción insert para agregar una nueva entrada en la base de datos
+            PreparedStatement insertarNuevoArticulo = conexion.prepareStatement("INSERT INTO ARTICULOS " +
+            "( ArtNum, ArtDes, ArtPrecUnit, ArtEstReg, SucCod, CiaCod ) " +
+            "VALUES ( ?, ?, ?, ?, ?, ? )" );
             insertarNuevoArticulo.setInt( 1, artNum );
             insertarNuevoArticulo.setString( 2, artDesc );
             insertarNuevoArticulo.setDouble( 3, precUnit );
@@ -77,10 +50,12 @@ public class PG_L13001_Mantenim_de_Art {
             insertarNuevoArticulo.setInt( 6, ciaCod  );
             
             resultado = insertarNuevoArticulo.executeUpdate();
-        } // fin de try // fin de try
-            catch ( SQLException excepcionSql ){
+        } catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
-            close();
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13001_Mantenim_de_Art.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
         } // fin de catch
         
         return resultado;
@@ -88,8 +63,16 @@ public class PG_L13001_Mantenim_de_Art {
     
     public int ActualizarArticulo(int artNum, String artDesc, double precUnit, String estReg ,int sucCod, int ciaCod){
         int resultado = 0;
-        try {            
-                               
+        Connection conexion = null;
+        try {
+            conexion = Conector.conexion();            
+            PreparedStatement modificarArticulo = conexion.prepareStatement("UPDATE ARTICULOS " +
+                "SET ArtDes = ? ," +
+                "ArtPrecUnit = ? ," +                    
+                "ArtEstReg = ? ," +
+                "SucCod = ? ,"+
+                "CiaCod = ? "+
+                "WHERE ArtNum = ? ");                   
             modificarArticulo.setString( 1, artDesc );
             modificarArticulo.setDouble( 2, precUnit );
             modificarArticulo.setString( 3, estReg );
@@ -99,16 +82,24 @@ public class PG_L13001_Mantenim_de_Art {
             
             resultado = modificarArticulo.executeUpdate();
                        
-         }catch(SQLException e){
+        }catch(SQLException e){
             System.out.println(e);
-            close();
-      }
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13001_Mantenim_de_Art.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            close(conexion);
+        }
       return resultado;
     }
     
     public int EliminarArticulo(int artNum){
         int resultado = 0;
-        try {            
+        Connection conexion = null;
+        try {
+            conexion = Conector.conexion();  
+            PreparedStatement eliminarArticulo = conexion.prepareStatement("UPDATE ARTICULOS " +
+                "SET ArtEstReg = ? "+
+                "WHERE ArtNum = ? ");            
             eliminarArticulo.setString( 1, "*" );           
             eliminarArticulo.setInt( 2, artNum );
            
@@ -116,7 +107,10 @@ public class PG_L13001_Mantenim_de_Art {
                        
         }catch(SQLException e){
             System.out.println(e);
-            close();
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13001_Mantenim_de_Art.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            close(conexion);
         }
         return resultado;
     }
@@ -128,21 +122,23 @@ public class PG_L13001_Mantenim_de_Art {
         int registros = 0;      
         String consultaContadora = "Select count(*) as total FROM ARTICULOS WHERE ArtEstReg = '"+criterio_seleccion+"' ";
         //obtenemos la cantidad de registros existentes en la tabla
+        Connection conexion = null;
+        Object[][] data = null;
         try{
+           conexion = Conector.conexion();   
            PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
            ResultSet res = pstm.executeQuery();
            res.next();
            registros = res.getInt("total");
            res.close();
-        }catch(SQLException e){
-           System.out.println(e);
-        }
-      //se crea una matriz con tantas filas y columnas que necesite
-      Object[][] data = new String[registros][5];
-      //realizamos la consulta sql y llenamos los datos en la matriz "Object"
-        try{
+           
+           //se crea una matriz con tantas filas y columnas que necesite
+           data = new String[registros][5];
+           //realizamos la consulta sql y llenamos los datos en la matriz "Object"
+           // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
+           PreparedStatement seleccionarTodosLosArticulosQueEsten = conexion.prepareStatement( "SELECT * FROM ARTICULOS WHERE ArtEstReg = ?"  );
            seleccionarTodosLosArticulosQueEsten.setString(1, criterio_seleccion);
-           ResultSet res = seleccionarTodosLosArticulosQueEsten.executeQuery();
+           res = seleccionarTodosLosArticulosQueEsten.executeQuery();
            int i = 0;
            while(res.next()){
                data[i][0] = String.valueOf( res.getInt( "ArtNum" ) );
@@ -154,21 +150,29 @@ public class PG_L13001_Mantenim_de_Art {
            }
            res.close();
         }catch(SQLException e){
-                 System.out.println(e);
+           System.out.println(e);
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13001_Mantenim_de_Art.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            close(conexion);
         }
+      
         return data;   
     } // fin del método 
     
     
-    public void close(){
+    private void close(Connection con){
+        if(con == null)
+            return;
+        
         try{
-            conexion.close();
+            con.close();
         } // fin de try
         catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
         } // fin de catch
     } // fin del método close
-    
+    /*
     public int GeneradorCodigos(){
         
         int codGenerado=0;
@@ -198,6 +202,7 @@ public class PG_L13001_Mantenim_de_Art {
         
         return codGenerado;
     }
+    */
   
        
 }

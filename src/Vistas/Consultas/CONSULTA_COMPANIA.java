@@ -35,14 +35,14 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class CONSULTA_COMPANIA extends javax.swing.JInternalFrame {
  
-    private Connection cn = null;
     private String ConsultaSQL;
     
     public CONSULTA_COMPANIA() {
         initComponents();
         txtcodCia.setEnabled(false);
         ResultSet resultado;
-        
+        /*
+        Connection cn = null;
         try{
             cn = Conector.conexion();
             Statement st = cn.createStatement();
@@ -57,14 +57,18 @@ public class CONSULTA_COMPANIA extends javax.swing.JInternalFrame {
         }catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
             close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CONSULTA_COMPANIA.class.getName()).log(Level.SEVERE, null, ex);
         } // fin de catch
+        */
     }
     void CargarlistaCias()          
     {
         CustomDefaultTableModel modelo= new CustomDefaultTableModel();
         String []Titulos = {"CODIGO","NOMBRE CIA","RUC"};
         modelo.setColumnIdentifiers(Titulos);
-         this.tbcias.setModel(modelo);
+        this.tbcias.setModel(modelo);
+        /*
         try {
         
             String []registros= new String[3];
@@ -84,7 +88,7 @@ public class CONSULTA_COMPANIA extends javax.swing.JInternalFrame {
         } catch (SQLException ex) {
             Logger.getLogger(CONSULTA_COMPANIA.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        */
     
     }
 
@@ -328,14 +332,7 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     
 }//GEN-LAST:event_jButton2ActionPerformed
 
-    public void close(){
-        try{
-            cn.close();
-        } // fin de try
-        catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-        } // fin de catch
-    } // fin del método close
+   
     
     private void txtcodCiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcodCiaActionPerformed
         // TODO add your handling code here:

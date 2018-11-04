@@ -48,16 +48,11 @@ public class CONSULTA_COTIZACION extends javax.swing.JInternalFrame {
     PG_L13003_Mantenim_de_Ven EXTRACTOR_VENDEDORES; 
     Object [][] dbVendedores;
    
-    Connection cn= null;
     public CONSULTA_COTIZACION() {
         
         initComponents();
         EXTRACTOR_CLIENTES = new PG_L13005_Mantenim_de_Cli();
-        try {       
-            cn= Conector.conexion();
-        } catch (SQLException ex) {
-            Logger.getLogger(CONSULTA_COTIZACION.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
         // obtenemos las CIAS para poder mostrar al usuario al momento de introducir la CiaCod
         EXTRACTOR_CIAS = new PG_L13002_Mantenim_de_Cia();
         dbCias = EXTRACTOR_CIAS.obtenerTodasLasCiasQueEsten("A");

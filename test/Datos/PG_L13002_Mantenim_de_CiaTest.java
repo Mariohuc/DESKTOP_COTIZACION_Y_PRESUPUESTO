@@ -112,13 +112,6 @@ public class PG_L13002_Mantenim_de_CiaTest {
     /**
      * Test of close method, of class PG_L13002_Mantenim_de_Cia.
      */
-    @Test
-    public void testClose() {
-        System.out.println("close");
-        PG_L13002_Mantenim_de_Cia instance = new PG_L13002_Mantenim_de_Cia();
-        instance.close();
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
-    }
+    
     
 }

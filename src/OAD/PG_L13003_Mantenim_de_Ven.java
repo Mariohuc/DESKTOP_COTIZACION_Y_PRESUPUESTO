@@ -19,51 +19,26 @@ import java.util.logging.Logger;
  */
 public class PG_L13003_Mantenim_de_Ven {
     
-    private Connection conexion = null; // maneja la conexión
-    private PreparedStatement seleccionarTodosLosVendedoresQueEsten = null;
-    private PreparedStatement seleccionarVendedoresPorCodigo = null;
-    private PreparedStatement insertarNuevoVendedor = null;
-    private PreparedStatement modificarVendedor = null;
-    private PreparedStatement eliminarVendedor = null;
-    
-    public PG_L13003_Mantenim_de_Ven(){
-        try{
-            
-            conexion = Conector.conexion();
-            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
-            seleccionarTodosLosVendedoresQueEsten =
-            conexion.prepareStatement( "SELECT * FROM VENDEDORES WHERE VenEstReg = ?" );
-           
-            // crea una consulta que selecciona las entradas con un apellido específico
-            seleccionarVendedoresPorCodigo = conexion.prepareStatement(
-            "SELECT * FROM VENDEDORES WHERE VenCod = ?" );
-
-            // crea instrucción insert para agregar una nueva entrada en la base de datos
-            insertarNuevoVendedor = conexion.prepareStatement("INSERT INTO VENDEDORES " +
-            "( VenCod, VenNom, VenTel, VenEmail, VenEstReg ) " +
-            "VALUES ( ?, ?, ?, ?, ? )" );
-            
-            modificarVendedor = conexion.prepareStatement("UPDATE VENDEDORES " +
-                "SET VenNom = ? ," +
-                "VenTel = ? ," +                    
-                "VenEmail = ? ," +
-                "VenEstReg = ? "+
-                "WHERE VenCod = ? ");
-            
-            eliminarVendedor = conexion.prepareStatement("UPDATE VENDEDORES " +
-                "SET VenEstReg = ? "+
-                "WHERE VenCod = ? ");
-            
-        } catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-            System.exit( 1 );
-        } 
-		}
+     
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (java.lang.ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     
     public int agregarVendedor( int venCod, String venNom, int tel, String email ,String estReg ){
         int resultado = 0;
         // establece los parámetros, después ejecuta insertarNuevaCia
+        Connection conexion = null;
         try{
+            conexion = Conector.conexion();
+            // crea instrucción insert para agregar una nueva entrada en la base de datos
+            PreparedStatement insertarNuevoVendedor = conexion.prepareStatement("INSERT INTO VENDEDORES " +
+            "( VenCod, VenNom, VenTel, VenEmail, VenEstReg ) " +
+            "VALUES ( ?, ?, ?, ?, ? )" );
             insertarNuevoVendedor.setInt( 1, venCod );
             insertarNuevoVendedor.setString( 2, venNom );
             insertarNuevoVendedor.setInt(3, tel );
@@ -74,15 +49,26 @@ public class PG_L13003_Mantenim_de_Ven {
         } // fin de try // fin de try // fin de try // fin de try
         catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
-            close();
-        } // fin de catch
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13003_Mantenim_de_Ven.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
         
         return resultado;
     } // fin del método 
     
     public int ActualizarVendedores(int venCod, String venNom, int tel, String email ,String estReg){
         int resultado = 0;
-        try {                                               
+        Connection conexion = null;
+        try{
+            conexion = Conector.conexion();
+            PreparedStatement modificarVendedor = conexion.prepareStatement("UPDATE VENDEDORES " +
+                "SET VenNom = ? ," +
+                "VenTel = ? ," +                    
+                "VenEmail = ? ," +
+                "VenEstReg = ? "+
+                "WHERE VenCod = ? ");
             modificarVendedor.setString( 1, venNom );
             modificarVendedor.setInt(2, tel );
             modificarVendedor.setString( 3, email );
@@ -93,14 +79,22 @@ public class PG_L13003_Mantenim_de_Ven {
                        
          }catch(SQLException e){
             System.out.println(e);
-            close();
-        }
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13003_Mantenim_de_Ven.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
         return resultado;
     }
     
     public int EliminarVendedor(int venCod){
         int resultado = 0;
-        try {            
+        Connection conexion = null;
+        try {
+            conexion = Conector.conexion();
+            PreparedStatement eliminarVendedor = conexion.prepareStatement("UPDATE VENDEDORES " +
+                "SET VenEstReg = ? "+
+                "WHERE VenCod = ? ");            
             eliminarVendedor.setString( 1, "*" );
             eliminarVendedor.setInt( 2, venCod );
            
@@ -108,8 +102,11 @@ public class PG_L13003_Mantenim_de_Ven {
                        
         }catch(SQLException e){
             System.out.println(e);
-            close();
-        }
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13003_Mantenim_de_Ven.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
         return resultado;
     }
     
@@ -120,39 +117,49 @@ public class PG_L13003_Mantenim_de_Ven {
         int registros = 0;      
         String consultaContadora = "Select count(*) as total FROM VENDEDORES WHERE VenEstReg = '"+criterio_seleccion+"' ";
         //obtenemos la cantidad de registros existentes en la tabla
+        Connection conexion = null;
+        Object[][] data = null;
         try{
-           PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
-           ResultSet res = pstm.executeQuery();
-           res.next();
-           registros = res.getInt("total");
-           res.close();
+            conexion = Conector.conexion();
+            PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
+            ResultSet res = pstm.executeQuery();
+            res.next();
+            registros = res.getInt("total");
+            res.close();
+            //se crea una matriz con tantas filas y columnas que necesite
+            data = new String[registros][4];
+            //realizamos la consulta sql y llenamos los datos en la matriz "Object"
+            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
+            PreparedStatement seleccionarTodosLosVendedoresQueEsten =
+            conexion.prepareStatement( "SELECT * FROM VENDEDORES WHERE VenEstReg = ?" );
+            seleccionarTodosLosVendedoresQueEsten.setString(1, criterio_seleccion);
+            res = seleccionarTodosLosVendedoresQueEsten.executeQuery();
+            int i = 0;
+            while(res.next()){
+                data[i][0] = String.valueOf( res.getInt( "VenCod" ) );
+                data[i][1] = res.getString( "VenNom" );         
+                data[i][2] = String.valueOf( res.getInt( "VenTel" ) );
+                data[i][3] = res.getString( "VenEmail" );
+               i++;
+            }
+            res.close();
         }catch(SQLException e){
            System.out.println(e);
-        }
-      //se crea una matriz con tantas filas y columnas que necesite
-      Object[][] data = new String[registros][4];
-      //realizamos la consulta sql y llenamos los datos en la matriz "Object"
-        try{
-           seleccionarTodosLosVendedoresQueEsten.setString(1, criterio_seleccion);
-           ResultSet res = seleccionarTodosLosVendedoresQueEsten.executeQuery();
-           int i = 0;
-           while(res.next()){
-               data[i][0] = String.valueOf( res.getInt( "VenCod" ) );
-               data[i][1] = res.getString( "VenNom" );         
-               data[i][2] = String.valueOf( res.getInt( "VenTel" ) );
-               data[i][3] = res.getString( "VenEmail" );
-              i++;
-           }
-           res.close();
-        }catch(SQLException e){
-                 System.out.println(e);
-        }
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13003_Mantenim_de_Ven.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
+      
         return data;   
     } // fin del método
     
-    public void close(){
+    private void close(Connection con){
+        if(con == null)
+            return;
+        
         try{
-            conexion.close();
+            con.close();
         } // fin de try
         catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();

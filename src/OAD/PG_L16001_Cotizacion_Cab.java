@@ -7,7 +7,6 @@ package OAD;
 
 import DB.Conector;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,50 +19,28 @@ import java.util.logging.Logger;
  * @author MARIO HUAYPUNA
  */
 public class PG_L16001_Cotizacion_Cab {
+
     
-    private Connection conexion = null; // maneja la conexión
-    private PreparedStatement seleccionarTodasLasCotizacionesCabActivas = null;
-    private PreparedStatement insertarNuevaCotizacionCab = null;
-    private PreparedStatement modificarCotizacionCab = null;
-
-    // constructor
-    public PG_L16001_Cotizacion_Cab(){
-        
-        try{  
-            conexion = Conector.conexion();
-            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
-            seleccionarTodasLasCotizacionesCabActivas =
-            conexion.prepareStatement( "SELECT * FROM COTIZACION_CAB WHERE CotCabEstReg = ? " );
-
-            // crea instrucción insert para agregar una nueva entrada en la base de datos
-            insertarNuevaCotizacionCab = conexion.prepareStatement("INSERT INTO COTIZACION_CAB " +
-            "( CotCabNum, CotCabFecEmi, CotCabGar, CotCabPlazEnt, CotCabForPag, CotCabEstReg ,CliCod, VenCod, SucCod, CiaCod) " +
-            "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
-            
-            modificarCotizacionCab = conexion.prepareStatement("UPDATE COTIZACION_CAB " +
-                "SET CotCabFecEmi = ? ," +
-                "CotCabGar = ? ," +                    
-                "CotCabPlazEnt = ? ," +
-                "CotCabForPag = ? ,"+
-                "CotCabEstReg = ?, "+
-                "CliCod = ?, "+
-                "VenCod = ?, "+
-                "SucCod = ?, "+
-                "CiaCod = ? "+    
-                "WHERE CotCabNum = ? ");
-            
-         
-        } catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-            System.exit( 1 );
-        } 
-		} // fin del constructor de PG_L13001_Mantenim_de_Art
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (java.lang.ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     
     public int agregarCotizacionCab( int CotCabNum, String CotCabFecEmi, String CotCabGar, String CotCabPlazEnt, String CotCabForPag, String CotCabEstReg ,
             int CliCod, int VenCod, int SucCod, int CiaCod ){
         int resultado = 0;
         // establece los parámetros, después ejecuta insertarNuevoArticulo
-        try{
+        Connection conexion = null;
+        try{       
+            conexion = Conector.conexion();
+            // crea instrucción insert para agregar una nueva entrada en la base de datos
+            PreparedStatement insertarNuevaCotizacionCab = conexion.prepareStatement("INSERT INTO COTIZACION_CAB " +
+            "( CotCabNum, CotCabFecEmi, CotCabGar, CotCabPlazEnt, CotCabForPag, CotCabEstReg ,CliCod, VenCod, SucCod, CiaCod) " +
+            "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
             insertarNuevaCotizacionCab.setInt( 1, CotCabNum );
             insertarNuevaCotizacionCab.setString(2,CotCabFecEmi);
             insertarNuevaCotizacionCab.setString( 3, CotCabGar );
@@ -79,8 +56,9 @@ public class PG_L16001_Cotizacion_Cab {
         } // fin de try // fin de try // fin de try // fin de try
             catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
-            close();
-        } // fin de catch
+        } finally {
+            close(conexion);
+        }// fin de catch 
         
         return resultado;
     } // fin del método agregarPersona
@@ -88,8 +66,20 @@ public class PG_L16001_Cotizacion_Cab {
     public int ActualizarCotizacionCab( int CotCabNum, String CotCabFecEmi, String CotCabGar, String CotCabPlazEnt, String CotCabForPag, String CotCabEstReg ,
             int CliCod, int VenCod, int SucCod, int CiaCod  ){
         int resultado = 0;
-        try {            
-            
+        Connection conexion = null;
+        try{       
+            conexion = Conector.conexion();           
+            PreparedStatement modificarCotizacionCab = conexion.prepareStatement("UPDATE COTIZACION_CAB " +
+                "SET CotCabFecEmi = ? ," +
+                "CotCabGar = ? ," +                    
+                "CotCabPlazEnt = ? ," +
+                "CotCabForPag = ? ,"+
+                "CotCabEstReg = ?, "+
+                "CliCod = ?, "+
+                "VenCod = ?, "+
+                "SucCod = ?, "+
+                "CiaCod = ? "+    
+                "WHERE CotCabNum = ? ");
             modificarCotizacionCab.setString(1, CotCabFecEmi);
             modificarCotizacionCab.setString( 2, CotCabGar );
             modificarCotizacionCab.setString( 3, CotCabPlazEnt );
@@ -103,10 +93,11 @@ public class PG_L16001_Cotizacion_Cab {
             
             resultado = modificarCotizacionCab.executeUpdate();
                        
-         }catch(SQLException e){
+        }catch(SQLException e){
             System.out.println(e);
-            close();
-      }
+        } finally {
+            close(conexion);
+        }// fin de catch
       return resultado;
     }
     
@@ -117,45 +108,53 @@ public class PG_L16001_Cotizacion_Cab {
         int registros = 0;      
         String consultaContadora = "Select count(*) as total FROM COTIZACION_CAB WHERE CotCabEstReg = '"+criterio_seleccion+"' ";
         //obtenemos la cantidad de registros existentes en la tabla
-        try{
-           PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
-           ResultSet res = pstm.executeQuery();
-           res.next();
-           registros = res.getInt("total");
-           res.close();
-        }catch(SQLException e){
+        Connection conexion = null;
+        Object[][] data = null;
+        try{       
+            conexion = Conector.conexion(); 
+            PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
+            ResultSet res = pstm.executeQuery();
+            res.next();
+            registros = res.getInt("total");
+            res.close();
+            //se crea una matriz con tantas filas y columnas que necesite
+            data = new String[registros][9];
+            //realizamos la consulta sql y llenamos los datos en la matriz "Object"
+             // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
+            PreparedStatement seleccionarTodasLasCotizacionesCabActivas =
+            conexion.prepareStatement( "SELECT * FROM COTIZACION_CAB WHERE CotCabEstReg = ? " );
+            seleccionarTodasLasCotizacionesCabActivas.setString(1, criterio_seleccion);
+            res = seleccionarTodasLasCotizacionesCabActivas.executeQuery();
+            int i = 0;
+            while(res.next()){
+                data[i][0] = String.valueOf( res.getInt( "CotCabNum" ) );
+                data[i][1] = res.getString("CotCabFecEmi");         
+                data[i][2] = res.getString("CotCabGar" );
+                data[i][3] = res.getString("CotCabPlazEnt");
+                data[i][4] = res.getString("CotCabForPag");
+                data[i][5] = String.valueOf(res.getInt("CliCod"));
+                data[i][6] = String.valueOf(res.getInt("VenCod"));
+                data[i][7] = String.valueOf(res.getInt("SucCod"));
+                data[i][8] = String.valueOf(res.getInt("CiaCod"));
+                i++;
+            }
+            res.close();
+        } catch(SQLException e){
            System.out.println(e);
-        }
-      //se crea una matriz con tantas filas y columnas que necesite
-      Object[][] data = new String[registros][9];
-      //realizamos la consulta sql y llenamos los datos en la matriz "Object"
-        try{
-           seleccionarTodasLasCotizacionesCabActivas.setString(1, criterio_seleccion);
-           ResultSet res = seleccionarTodasLasCotizacionesCabActivas.executeQuery();
-           int i = 0;
-           while(res.next()){
-               data[i][0] = String.valueOf( res.getInt( "CotCabNum" ) );
-               data[i][1] = res.getString("CotCabFecEmi");         
-               data[i][2] = res.getString("CotCabGar" );
-               data[i][3] = res.getString("CotCabPlazEnt");
-               data[i][4] = res.getString("CotCabForPag");
-               data[i][5] = String.valueOf(res.getInt("CliCod"));
-               data[i][6] = String.valueOf(res.getInt("VenCod"));
-               data[i][7] = String.valueOf(res.getInt("SucCod"));
-               data[i][8] = String.valueOf(res.getInt("CiaCod"));
-               i++;
-           }
-           res.close();
-        }catch(SQLException e){
-                 System.out.println(e);
-        }
+        } finally {
+            close(conexion);
+        }// fin de catch
+      
         return data;   
     } // fin del método 
     
     
-    public void close(){
+    private void close(Connection con){
+        if(con == null)
+            return;
+        
         try{
-            conexion.close();
+            con.close();
         } // fin de try
         catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();

@@ -21,61 +21,36 @@ import javax.swing.table.DefaultTableModel;
  * @author MARIO REUS
  */
 public class PG_L13002_Mantenim_de_Cia {
-	
-    public Connection conexion = null; // maneja la conexión
-    private PreparedStatement seleccionarTodasLasCiasQueEsten = null;
-    private PreparedStatement seleccionarCiasPorCodigo = null;
-    private PreparedStatement insertarNuevaCia = null;
-    private PreparedStatement modificarCia = null;
-    private PreparedStatement eliminarCia = null;
-    
-		/*
-			Data Manipulation Language (DML) as INSERT, UPDATE, DELETE, ...
-			Data Definition Language (DDL) as CREATE TABLE, DROP etc.
-		
-			ExecuteUpdate()
-			Return:	Ya sea (1) el recuento de filas para las declaraciones del lenguaje de manipulación de datos SQL (DML) 
-			o (2) 0 para las declaraciones de SQL que no devuelven nada.
-		*/
-		
-    // constructor
-    public PG_L13002_Mantenim_de_Cia(){
-        try{
-            
-            conexion = Conector.conexion();
-            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
-            seleccionarTodasLasCiasQueEsten =
-            conexion.prepareStatement( "SELECT * FROM CIAS WHERE CiaEstReg = ? " );
-           
-            // crea una consulta que selecciona las entradas con un apellido específico
-            seleccionarCiasPorCodigo = conexion.prepareStatement(
-            "SELECT * FROM CIAS WHERE CiaCod = ?" );
+	  
+    /*
+    Data Manipulation Language (DML) as INSERT, UPDATE, DELETE, ...
+    Data Definition Language (DDL) as CREATE TABLE, DROP etc.
 
-            // crea instrucción insert para agregar una nueva entrada en la base de datos
-            insertarNuevaCia = conexion.prepareStatement("INSERT INTO CIAS " +
-            "( CiaCod, CiaNom, CiaRUC, CiaEstReg ) " +
-            "VALUES ( ?, ?, ?, ? )" );
-            
-            modificarCia = conexion.prepareStatement("UPDATE CIAS " +
-                "SET CiaNom = ? ," +
-                "CiaRUC = ? ," +                    
-                "CiaEstReg = ? " +
-                "WHERE CiaCod = ? ");
-            
-            eliminarCia = conexion.prepareStatement("UPDATE CIAS " +
-                "SET CiaEstReg = ? "+
-                "WHERE CiaCod = ? ");
-                    
-        } catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-            System.exit( 1 );
-        } 
-		} // fin del constructor de PG_L13001_Mantenim_de_Art
+    ExecuteUpdate()
+    Return:	Ya sea (1) el recuento de filas para las declaraciones del lenguaje de manipulación de datos SQL (DML) 
+    o (2) 0 para las declaraciones de SQL que no devuelven nada.
+    */
+		
+    
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (java.lang.ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     
     public int agregarCia( int ciaCod, String ciaNom, String Ruc, String estReg ){
         int resultado = 0;
         // establece los parámetros, después ejecuta insertarNuevaCia
+        Connection conexion = null;
         try{
+            conexion = Conector.conexion();
+            // crea instrucción insert para agregar una nueva entrada en la base de datos
+            PreparedStatement insertarNuevaCia = conexion.prepareStatement("INSERT INTO CIAS " +
+            "( CiaCod, CiaNom, CiaRUC, CiaEstReg ) " +
+            "VALUES ( ?, ?, ?, ? )" );
             insertarNuevaCia.setInt( 1, ciaCod );
             insertarNuevaCia.setString( 2, ciaNom );
             insertarNuevaCia.setString(3, Ruc );
@@ -86,8 +61,11 @@ public class PG_L13002_Mantenim_de_Cia {
         } // fin de try // fin de try // fin de try // fin de try
             catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
-            close();
-        } // fin de catch
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13002_Mantenim_de_Cia.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
         
         return resultado;
     } // fin del método 
@@ -100,8 +78,14 @@ public class PG_L13002_Mantenim_de_Cia {
     
     public int ActualizarCia(int ciaCod, String ciaNom, String Ruc, String estReg){
         int resultado = 0;
+        Connection conexion = null;
         try {            
-                                      
+            conexion = Conector.conexion();
+            PreparedStatement modificarCia = conexion.prepareStatement("UPDATE CIAS " +
+                "SET CiaNom = ? ," +
+                "CiaRUC = ? ," +                    
+                "CiaEstReg = ? " +
+                "WHERE CiaCod = ? ");
             modificarCia.setString( 1, ciaNom );
             modificarCia.setString(2, Ruc );
             modificarCia.setString( 3, estReg );
@@ -111,14 +95,22 @@ public class PG_L13002_Mantenim_de_Cia {
                        
          }catch(SQLException e){
             System.out.println(e);
-            close();
-      }
-      return resultado;
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13002_Mantenim_de_Cia.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
+        return resultado;
     }
     
     public int EliminarCia(int ciaCod){
         int resultado = 0;
+        Connection conexion = null;
         try {            
+            conexion = Conector.conexion();
+            PreparedStatement eliminarCia = conexion.prepareStatement("UPDATE CIAS " +
+                "SET CiaEstReg = ? "+
+                "WHERE CiaCod = ? ");            
             eliminarCia.setString( 1, "*" );
             eliminarCia.setInt( 2, ciaCod );
            
@@ -126,8 +118,11 @@ public class PG_L13002_Mantenim_de_Cia {
                        
         }catch(SQLException e){
             System.out.println(e);
-            close();
-        }
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13002_Mantenim_de_Cia.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
         return resultado;
     }
    
@@ -137,23 +132,25 @@ public class PG_L13002_Mantenim_de_Cia {
         int registros = 0;      
         String consultaContadora = "Select count(*) as total FROM CIAS WHERE CiaEstReg = '"+criterio_seleccion +"' ";
         //obtenemos la cantidad de registros existentes en la tabla
+        Connection conexion = null;
+        Object[][] data = null;
         try{
-           PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
-           ResultSet res = pstm.executeQuery();
-           res.next();
-           registros = res.getInt("total");
-           res.close();
-        }catch(SQLException e){
-           System.out.println(e);
-        }
-      //se crea una matriz con tantas filas y columnas que necesite
-      Object[][] data = new String[registros][3];
-      //realizamos la consulta sql y llenamos los datos en la matriz "Object"
-        try{
-           seleccionarTodasLasCiasQueEsten.setString(1, criterio_seleccion);
-           ResultSet res = seleccionarTodasLasCiasQueEsten.executeQuery();
-           int i = 0;
-           while(res.next()){
+            conexion = Conector.conexion();
+            PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
+            ResultSet res = pstm.executeQuery();
+            res.next();
+            registros = res.getInt("total");
+            res.close();
+            //se crea una matriz con tantas filas y columnas que necesite
+            data = new String[registros][3];
+            
+            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
+            PreparedStatement seleccionarTodasLasCiasQueEsten = conexion.prepareStatement( "SELECT * FROM CIAS WHERE CiaEstReg = ? " );
+            //realizamos la consulta sql y llenamos los datos en la matriz "Object"
+            seleccionarTodasLasCiasQueEsten.setString(1, criterio_seleccion);
+            res = seleccionarTodasLasCiasQueEsten.executeQuery();
+            int i = 0;
+            while(res.next()){
                data[i][0] = String.valueOf( res.getInt( "CiaCod" ) );
                data[i][1] = res.getString( "CiaNom" );         
                data[i][2] = res.getString( "CiaRUC" );
@@ -161,15 +158,23 @@ public class PG_L13002_Mantenim_de_Cia {
            }
            res.close();
         }catch(SQLException e){
-                 System.out.println(e);
-        }
+           System.out.println(e);
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13002_Mantenim_de_Cia.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch 
+      
         return data;   
     } // fin del método
     
     
-    public void close(){
+    private void close(Connection con){
+        if(con == null)
+            return;
+        
         try{
-            conexion.close();
+            con.close();
         } // fin de try
         catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();

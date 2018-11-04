@@ -36,14 +36,14 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class CONSULTA_VENDEDORES extends javax.swing.JInternalFrame {
  
-    private Connection cn = null;
     private String ConsultaSQL;
     
     public CONSULTA_VENDEDORES() {
         initComponents();
         txtcodigo.setEnabled(false);
-        ResultSet resultado;
-        
+        ResultSet resultado = null;
+        /*
+        Connection cn = null;
         try{
             cn = Conector.conexion();
             Statement st = cn.createStatement();
@@ -57,15 +57,16 @@ public class CONSULTA_VENDEDORES extends javax.swing.JInternalFrame {
         
         }catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
-            close();
         } // fin de catch
+        */
     }
     void CargarlistaVendedores()          
     {
         CustomDefaultTableModel modelo= new CustomDefaultTableModel();
         String []Titulos = {"CODIGO","NOMBRES","TELEFONO","EMAIL"};
         modelo.setColumnIdentifiers(Titulos);
-         this.tbvendedores.setModel(modelo);
+        this.tbvendedores.setModel(modelo);
+        /*
         try {          
         
             String []registros= new String[4];
@@ -86,7 +87,7 @@ public class CONSULTA_VENDEDORES extends javax.swing.JInternalFrame {
         } catch (SQLException ex) {
             Logger.getLogger(CONSULTA_VENDEDORES.class.getName()).log(Level.SEVERE, null, ex);
         }
-  
+        */
     }
 
     /** This method is called from within the constructor to
@@ -362,14 +363,6 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     
 }//GEN-LAST:event_jButton2ActionPerformed
 
-    public void close(){
-        try{
-            cn.close();
-        } // fin de try
-        catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-        } // fin de catch
-    } // fin del método close
 
     private void txtcodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcodigoActionPerformed
         // TODO add your handling code here:

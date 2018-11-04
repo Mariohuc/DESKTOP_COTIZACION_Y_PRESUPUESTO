@@ -7,7 +7,6 @@ package OAD;
 
 import DB.Conector;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,51 +19,26 @@ import java.util.logging.Logger;
  */
 public class PG_L13005_Mantenim_de_Cli {
 
-    private Connection conexion = null; // maneja la conexión
-    private PreparedStatement seleccionarTodosLosClientesQueEsten = null;
-    private PreparedStatement seleccionarClientesPorCodigo = null;
-    private PreparedStatement insertarNuevoCliente = null;
-    private PreparedStatement modificarCliente = null;
-    private PreparedStatement eliminarCliente = null;
-    
-    // constructor
-    public PG_L13005_Mantenim_de_Cli(){
-        try{
-
-            conexion = Conector.conexion();
-            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
-            seleccionarTodosLosClientesQueEsten =
-            conexion.prepareStatement( "SELECT * FROM CLIENTES WHERE CliEstReg = ? " );
-           
-            // crea una consulta que selecciona las entradas con un apellido específico
-            seleccionarClientesPorCodigo = conexion.prepareStatement(
-            "SELECT * FROM CLIENTES WHERE CliCod = ?" );
-
-            // crea instrucción insert para agregar una nueva entrada en la base de datos
-            insertarNuevoCliente = conexion.prepareStatement("INSERT INTO CLIENTES " +
-            "( CliCod, CliNom, CliDir, CliEstReg ) " +
-            "VALUES ( ?, ?, ?, ? )" );
-            
-            modificarCliente = conexion.prepareStatement("UPDATE CLIENTES " +
-                "SET CliNom = ? ," +
-                "CliDir = ? ," +                    
-                "CliEstReg = ? " +
-                "WHERE CliCod = ? ");
-            
-            eliminarCliente = conexion.prepareStatement("UPDATE CLIENTES " +
-                "SET CliEstReg = ? "+
-                "WHERE CliCod = ? ");
-                    
-        } catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-            System.exit( 1 );
-        } 
-		} // fin del constructor de PG_L13001_Mantenim_de_Art
+   
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (java.lang.ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     
     public int agregarClientes( int cliCod, String cliNom, String cliDir, String estReg ){
         int resultado = 0;
         // establece los parámetros, después ejecuta insertarNuevaCia
-        try{
+        Connection conexion = null;
+        try{       
+            conexion = Conector.conexion();
+            // crea instrucción insert para agregar una nueva entrada en la base de datos
+            PreparedStatement insertarNuevoCliente = conexion.prepareStatement("INSERT INTO CLIENTES " +
+            "( CliCod, CliNom, CliDir, CliEstReg ) " +
+            "VALUES ( ?, ?, ?, ? )" );
             insertarNuevoCliente.setInt( 1, cliCod );
             insertarNuevoCliente.setString( 2, cliNom );
             insertarNuevoCliente.setString(3, cliDir );
@@ -74,16 +48,23 @@ public class PG_L13005_Mantenim_de_Cli {
         } // fin de try // fin de try // fin de try // fin de try // fin de try // fin de try // fin de try // fin de try
             catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
-            close();
-        } // fin de catch
+        } finally {
+            close(conexion);
+        }// fin de catch 
         
         return resultado;
     } // fin del método 
     
     public int ActualizarClientes(int cliCod, String cliNom, String cliDir, String estReg){
         int resultado = 0;
-        try {            
-                                      
+        Connection conexion = null;
+        try{       
+            conexion = Conector.conexion();            
+            PreparedStatement modificarCliente = conexion.prepareStatement("UPDATE CLIENTES " +
+                "SET CliNom = ? ," +
+                "CliDir = ? ," +                    
+                "CliEstReg = ? " +
+                "WHERE CliCod = ? ");                          
             modificarCliente.setString( 1, cliNom );
             modificarCliente.setString(2, cliDir );
             modificarCliente.setString( 3, estReg );
@@ -93,23 +74,30 @@ public class PG_L13005_Mantenim_de_Cli {
                        
          }catch(SQLException e){
             System.out.println(e);
-            close();
-      }
-      return resultado;
+        } finally {
+            close(conexion);
+        }// fin de catch 
+        return resultado;
     }
     
     public int EliminarClientes(int cliCod){
         int resultado = 0;
-        try {            
+        Connection conexion = null;
+        try{       
+            conexion = Conector.conexion();
+            PreparedStatement eliminarCliente = conexion.prepareStatement("UPDATE CLIENTES " +
+                "SET CliEstReg = ? "+
+                "WHERE CliCod = ? ");
             eliminarCliente.setString( 1, "*" );
             eliminarCliente.setInt( 2, cliCod );
            
             resultado = eliminarCliente.executeUpdate();
                        
-        }catch(SQLException e){
+        } catch(SQLException e){
             System.out.println(e);
-            close();
-        }
+        }finally {
+            close(conexion);
+        }// fin de catch 
         return resultado;
     }
     public Object [][] obtenerTodasLosClientesQueEsten( String criterio_seleccion ){
@@ -119,39 +107,47 @@ public class PG_L13005_Mantenim_de_Cli {
         int registros = 0;      
         String consultaContadora = "Select count(*) as total FROM CLIENTES WHERE CliEstReg = '"+criterio_seleccion+"' ";
         //obtenemos la cantidad de registros existentes en la tabla
-        try{
-           PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
-           ResultSet res = pstm.executeQuery();
-           res.next();
-           registros = res.getInt("total");
-           res.close();
+        Connection conexion = null;
+        Object[][] data = null;
+        try{       
+            conexion = Conector.conexion();
+            PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
+            ResultSet res = pstm.executeQuery();
+            res.next();
+            registros = res.getInt("total");
+            res.close();
+            //se crea una matriz con tantas filas y columnas que necesite
+            data = new String[registros][3];
+            //realizamos la consulta sql y llenamos los datos en la matriz "Object"
+            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
+            PreparedStatement seleccionarTodosLosClientesQueEsten =
+            conexion.prepareStatement( "SELECT * FROM CLIENTES WHERE CliEstReg = ? " );
+            seleccionarTodosLosClientesQueEsten.setString(1, criterio_seleccion);
+            res = seleccionarTodosLosClientesQueEsten.executeQuery();
+            int i = 0;
+            while(res.next()){
+                data[i][0] = String.valueOf( res.getInt( "CliCod" ) );
+                data[i][1] = res.getString( "CliNom" );         
+                data[i][2] = res.getString( "CliDir" );
+                i++;
+            }
+            res.close();
         }catch(SQLException e){
            System.out.println(e);
-        }
-      //se crea una matriz con tantas filas y columnas que necesite
-      Object[][] data = new String[registros][3];
-      //realizamos la consulta sql y llenamos los datos en la matriz "Object"
-        try{
-           seleccionarTodosLosClientesQueEsten.setString(1, criterio_seleccion);
-           ResultSet res = seleccionarTodosLosClientesQueEsten.executeQuery();
-           int i = 0;
-           while(res.next()){
-               data[i][0] = String.valueOf( res.getInt( "CliCod" ) );
-               data[i][1] = res.getString( "CliNom" );         
-               data[i][2] = res.getString( "CliDir" );
-              i++;
-           }
-           res.close();
-        }catch(SQLException e){
-                 System.out.println(e);
-        }
+        } finally {
+            close(conexion);
+        }// fin de catch 
+             
         return data;   
     } // fin del método 
     
     
-    public void close(){
+    private void close(Connection con){
+        if(con == null)
+            return;
+        
         try{
-            conexion.close();
+            con.close();
         } // fin de try
         catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();

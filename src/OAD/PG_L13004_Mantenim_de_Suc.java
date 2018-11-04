@@ -19,50 +19,26 @@ import java.util.logging.Logger;
  */
 public class PG_L13004_Mantenim_de_Suc {
     
-    private Connection conexion = null; // maneja la conexión
-    private PreparedStatement seleccionarTodasLasSucursalesQueEsten = null;
-    private PreparedStatement seleccionarLasSucursalesDeCiaQueEsten = null;
-    private PreparedStatement seleccionarSucursalesPorCodigo = null;
-    private PreparedStatement insertarNuevaSucursal = null;
-    private PreparedStatement modificarSucursal = null;
-    private PreparedStatement eliminarSucursal = null;
     
-    public PG_L13004_Mantenim_de_Suc(){
-        try{            
-            conexion = Conector.conexion();
-            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
-            seleccionarTodasLasSucursalesQueEsten =
-            conexion.prepareStatement( "SELECT * FROM SUCURSALES WHERE SucEstReg = ?" );
-            
-            // crea una consulta que selecciona las entradas con un apellido específico
-            seleccionarSucursalesPorCodigo = conexion.prepareStatement(
-            "SELECT * FROM SUCURSALES WHERE SucCod = ?" );
-
-            // crea instrucción insert para agregar una nueva entrada en la base de datos
-            insertarNuevaSucursal = conexion.prepareStatement("INSERT INTO SUCURSALES " +
-            "( SucCod, SucDes, SucEstReg, CiaCod ) " +
-            "VALUES ( ?, ?, ?, ?)" );
-            
-            modificarSucursal = conexion.prepareStatement("UPDATE SUCURSALES " +
-                "SET SucDes = ? ," +
-                "SucEstReg = ? ," +                    
-                "CiaCod = ? " +
-                "WHERE SucCod = ? ");
-            
-            eliminarSucursal = conexion.prepareStatement("UPDATE SUCURSALES " +
-                "SET SucEstReg = ? "+
-                "WHERE SucCod = ? ");
-            
-        } catch ( SQLException excepcionSql ){
-            excepcionSql.printStackTrace();
-            System.exit( 1 );
-        }  
-		}
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (java.lang.ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
     
     public int agregarSucursal( int sucCod, String sucDes, String estReg, int ciaCod ){
         int resultado = 0;
         // establece los parámetros, después ejecuta insertarNuevaCia
+        Connection conexion = null;
         try{
+            conexion = Conector.conexion();
+            // crea instrucción insert para agregar una nueva entrada en la base de datos
+            PreparedStatement insertarNuevaSucursal = conexion.prepareStatement("INSERT INTO SUCURSALES " +
+            "( SucCod, SucDes, SucEstReg, CiaCod ) " +
+            "VALUES ( ?, ?, ?, ?)" );
             insertarNuevaSucursal.setInt( 1, sucCod );
             insertarNuevaSucursal.setString( 2, sucDes );
             insertarNuevaSucursal.setString(3, estReg );
@@ -72,15 +48,25 @@ public class PG_L13004_Mantenim_de_Suc {
         } // fin de try // fin de try // fin de try // fin de try
             catch ( SQLException excepcionSql ){
             excepcionSql.printStackTrace();
-        } // fin de catch
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13004_Mantenim_de_Suc.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch
         
         return resultado;
     } // fin del método 
     
     public int ActualizarSucursal(int sucCod, String sucDes, String estReg, int ciaCod){
         int resultado = 0;
-        try {            
-                                                
+        Connection conexion = null;
+        try{
+            conexion = Conector.conexion();            
+            PreparedStatement modificarSucursal = conexion.prepareStatement("UPDATE SUCURSALES " +
+                "SET SucDes = ? ," +
+                "SucEstReg = ? ," +                    
+                "CiaCod = ? " +
+                "WHERE SucCod = ? ");                                    
             modificarSucursal.setString( 1, sucDes );
             modificarSucursal.setString(2, estReg );
             modificarSucursal.setInt( 3, ciaCod );
@@ -88,16 +74,24 @@ public class PG_L13004_Mantenim_de_Suc {
             
             resultado = modificarSucursal.executeUpdate();
                        
-         }catch(SQLException e){
+        }catch(SQLException e){
             System.out.println(e);
-           
-      }
-      return resultado;
+        //} catch (ClassNotFoundException ex) {
+        //    Logger.getLogger(PG_L13004_Mantenim_de_Suc.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            close(conexion);
+        }// fin de catch
+        return resultado;
     }
     
     public int EliminarSucursal(int sucCod){
         int resultado = 0;
-        try {            
+        Connection conexion = null;
+        try{
+            conexion = Conector.conexion();   
+            PreparedStatement eliminarSucursal = conexion.prepareStatement("UPDATE SUCURSALES " +
+                "SET SucEstReg = ? "+
+                "WHERE SucCod = ? ");
             eliminarSucursal.setString( 1, "*" );
             eliminarSucursal.setInt( 2, sucCod );
            
@@ -105,7 +99,9 @@ public class PG_L13004_Mantenim_de_Suc {
                        
         }catch(SQLException e){
             System.out.println(e);
-        }
+        } finally {
+            close(conexion);
+        }// fin de catch
         return resultado;
     }
     
@@ -116,30 +112,37 @@ public class PG_L13004_Mantenim_de_Suc {
         int registros = 0;      
         String consultaContadora = "Select count(*) as total FROM SUCURSALES WHERE SucEstReg = '"+criterio_seleccion+"' ";
         //obtenemos la cantidad de registros existentes en la tabla
+        Connection conexion = null;
+        Object[][] data = null;
         try{
-           PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
-           ResultSet res = pstm.executeQuery();
-           res.next();
-           registros = res.getInt("total");
+            conexion = Conector.conexion(); 
+            PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
+            ResultSet res = pstm.executeQuery();
+            res.next();
+            registros = res.getInt("total");
+            res.close();
+            //se crea una matriz con tantas filas y columnas que necesite
+            data = new String[registros][3];
+            //realizamos la consulta sql y llenamos los datos en la matriz "Object"
+            // crea una consulta que selecciona todas las entradas en la LibretaDirecciones
+            PreparedStatement seleccionarTodasLasSucursalesQueEsten =
+            conexion.prepareStatement( "SELECT * FROM SUCURSALES WHERE SucEstReg = ?" );
+            seleccionarTodasLasSucursalesQueEsten.setString(1, criterio_seleccion);
+            res = seleccionarTodasLasSucursalesQueEsten.executeQuery();
+            int i = 0;
+            while(res.next()){
+                data[i][0] = String.valueOf( res.getInt( "SucCod" ) );
+                data[i][1] = res.getString( "SucDes" );         
+                data[i][2] = String.valueOf( res.getInt( "CiaCod" ) );
+               i++;
+            }
+            res.close();
         }catch(SQLException e){
            System.out.println(e);
-        }
-      //se crea una matriz con tantas filas y columnas que necesite
-      Object[][] data = new String[registros][3];
-      //realizamos la consulta sql y llenamos los datos en la matriz "Object"
-        try{
-           seleccionarTodasLasSucursalesQueEsten.setString(1, criterio_seleccion);
-           ResultSet res = seleccionarTodasLasSucursalesQueEsten.executeQuery();
-           int i = 0;
-           while(res.next()){
-               data[i][0] = String.valueOf( res.getInt( "SucCod" ) );
-               data[i][1] = res.getString( "SucDes" );         
-               data[i][2] = String.valueOf( res.getInt( "CiaCod" ) );
-              i++;
-           }
-        }catch(SQLException e){
-                 System.out.println(e);
-        }
+        } finally {
+            close(conexion);
+        }// fin de catch 
+      
         return data;   
     } // fin del método obtenerTodasLasPersonaas
     
@@ -151,35 +154,48 @@ public class PG_L13004_Mantenim_de_Suc {
         String consultaContadora = "Select count(*) as total FROM SUCURSALES WHERE SucEstReg = '"+criterio_seleccion+"' "
                 + "AND CiaCod = "+codigoCia;
         //obtenemos la cantidad de registros existentes en la tabla
+        Connection conexion = null;
+        Object[][] data = null;
         try{
-           PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
-           ResultSet res = pstm.executeQuery();
-           res.next();
-           registros = res.getInt("total");
-        }catch(SQLException e){
-           System.out.println(e);
-        }
-      //se crea una matriz con tantas filas y columnas que necesite
-      Object[][] data = new String[registros][3];
-      //realizamos la consulta sql y llenamos los datos en la matriz "Object"
-        try{
-           seleccionarLasSucursalesDeCiaQueEsten =
+            conexion = Conector.conexion(); 
+            PreparedStatement pstm = conexion.prepareStatement( consultaContadora );
+            ResultSet res = pstm.executeQuery();
+            res.next();
+            registros = res.getInt("total");
+            res.close();
+            //se crea una matriz con tantas filas y columnas que necesite
+            data = new String[registros][3];
+            //realizamos la consulta sql y llenamos los datos en la matriz "Object"
+            PreparedStatement seleccionarLasSucursalesDeCiaQueEsten =
             conexion.prepareStatement( "SELECT * FROM SUCURSALES WHERE SucEstReg = '"+criterio_seleccion+"' AND CiaCod ="+codigoCia );
            
-           ResultSet res = seleccionarLasSucursalesDeCiaQueEsten.executeQuery();
-           int i = 0;
-           while(res.next()){
-               data[i][0] = String.valueOf( res.getInt( "SucCod" ) );
-               data[i][1] = res.getString( "SucDes" );         
-               data[i][2] = String.valueOf( res.getInt( "CiaCod" ) );
-              i++;
-           }
-           
+            res = seleccionarLasSucursalesDeCiaQueEsten.executeQuery();
+            int i = 0;
+            while(res.next()){
+                data[i][0] = String.valueOf( res.getInt( "SucCod" ) );
+                data[i][1] = res.getString( "SucDes" );         
+                data[i][2] = String.valueOf( res.getInt( "CiaCod" ) );
+               i++;
+            }
+            res.close();
         }catch(SQLException e){
-                 System.out.println(e);
-        }
+           System.out.println(e);
+        } finally {
+            close(conexion);
+        }// fin de catch 
+
         return data;   
     } // fin del método obtenerTodasLasPersonaas
     
-    
+    private void close(Connection con){
+        if(con == null)
+            return;
+        
+        try{
+            con.close();
+        } // fin de try
+        catch ( SQLException excepcionSql ){
+            excepcionSql.printStackTrace();
+        } // fin de catch
+    } // fin del método close
 }
